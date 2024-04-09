@@ -1,4 +1,8 @@
-#-- Visual Studio
+#-- Visual Studio --#
 *vcxproj*
 *.sln
 .vs
+x64
+
+#-- external libraries --#
+extern
