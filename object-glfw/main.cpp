@@ -27,10 +27,43 @@ SOFTWARE.
 import oglfw;
 
 
+typedef void (*FuncType)();
+
+struct A {
+    inline A() { std::cout << "in A()\n"; set(); }
+    virtual ~A() { std::cout << "in ~A()\n"; }
+
+    static void func() { std::cout << "in A::func()\n"; }
+
+    virtual void set() { ptr = this->func; }
+
+    FuncType ptr{ nullptr };
+};
+
+
+struct B : public A{
+    inline B() : A() { std::cout << "in B()\n"; set(); }
+    virtual ~B() { std::cout << "in ~B()\n"; }
+
+    static void func() { std::cout << "in B::func()\n"; }
+
+    //virtual void set() { ptr = this->func; }
+};
+
+
 int main()
 {
     oglfw::init::BaseLib my_glfw_lib;
 
+    oglfw::err::CoutErrorHandler cout_err_handler;
+
+    A a;
+    B b;
+
+    //b.set();
+    b.ptr();
+
+    /*
     std::cout << std::hex << int(my_glfw_lib.get_inited_platform()) << std::endl;
 
     std::cout << "cocoa  : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::COCOA)) << std::endl;
@@ -39,6 +72,8 @@ int main()
     std::cout << "win32  : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::WIN32)) << std::endl;
     std::cout << "x11    : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::X11)) << std::endl;
     std::cout << "any    : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::ANY)) << std::endl;
+    */
+
 
     return 0;
 }

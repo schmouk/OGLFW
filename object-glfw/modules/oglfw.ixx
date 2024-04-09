@@ -24,4 +24,5 @@ SOFTWARE.
 
 export module oglfw;
 
+export import :errors;
 export import :init;
