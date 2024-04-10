@@ -26,3 +26,5 @@ export module oglfw;
 
 export import :errors;
 export import :init;
+export import :utils;
+export import :window;
