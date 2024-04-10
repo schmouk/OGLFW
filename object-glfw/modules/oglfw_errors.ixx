@@ -41,6 +41,7 @@ export namespace oglfw::err
 
     export struct BaseErrorHandler;
     export struct CoutErrorHandler;
+    export class ErrorStatus;
 
 
     //=======================================================================
@@ -71,6 +72,54 @@ export namespace oglfw::err
         {
             std::cout << "!!! ERROR " << err_code << ": " << err_descr << std::endl;
         };
+
+    };
+
+
+    //=======================================================================
+    export class ErrorStatus
+    {
+    public:
+        static inline const int get_curent_error() noexcept
+        {
+            _last_error_code = glfwGetError(const_cast<const char**>(&_last_error_descr));
+            return _last_error_code;
+        }
+
+        [[nodiscard]]
+        static inline const int get_last_error_code() noexcept
+        {
+            return _last_error_code;
+        }
+
+        [[nodiscard]]
+        static inline const char* get_last_error_descr() noexcept
+        {
+            return _last_error_descr;
+        }
+
+        [[nodiscard]]
+        static inline const bool is_ok() noexcept
+        {
+            return get_curent_error() == GLFW_NO_ERROR;
+        }
+
+        [[nodiscard]]
+        static inline const bool is_ok(const int error_code) noexcept
+        {
+            return error_code == GLFW_NO_ERROR;
+        }
+
+        [[nodiscard]]
+        static inline const bool is_last_error_ok() noexcept
+        {
+            return get_last_error_code() == GLFW_NO_ERROR;
+        }
+
+
+    private:
+        static inline int _last_error_code{ GLFW_NO_ERROR };
+        static inline char* _last_error_descr{ nullptr };
 
     };
 }
