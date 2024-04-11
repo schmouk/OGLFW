@@ -22,26 +22,33 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <iostream>
+module;
 
-import oglfw;
+#include <vector>
+
+#include "GLFW/glfw3.h"
 
 
-int main()
+export module oglfw:video;
+
+
+//===========================================================================
+export namespace oglfw::video
 {
-    oglfw::init::BaseLib my_glfw_lib;
+    //=======================================================================
+    export using VideoMode = GLFWvidmode;
 
-    /**/
-    std::cout << std::hex << int(my_glfw_lib.get_inited_platform()) << std::endl;
-
-    std::cout << "cocoa  : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::COCOA)) << std::endl;
-    std::cout << "stub   : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::STUB)) << std::endl;
-    std::cout << "wayland: " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::WAYLAND)) << std::endl;
-    std::cout << "win32  : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::WIN32)) << std::endl;
-    std::cout << "x11    : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::X11)) << std::endl;
-    std::cout << "any    : " << int(my_glfw_lib.is_platform_supported(oglfw::init::EPlatform::ANY)) << std::endl;
-    /**/
+    export using VideoModesList = std::vector<VideoMode>;
 
 
-    return 0;
+    export VideoModesList set_video_modes_list(const GLFWvidmode* vid_modes_list, const int vid_modes_count) noexcept
+    {
+        VideoModesList res;
+
+        for (int i = 0; i < vid_modes_count; ++i)
+            res.push_back(vid_modes_list[i]);
+
+        return res;
+    }
+
 }
