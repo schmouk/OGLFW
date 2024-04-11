@@ -24,6 +24,7 @@ SOFTWARE.
 
 module;
 
+#include <algorithm>
 #include <type_traits>
 		
 
@@ -43,6 +44,10 @@ export namespace oglfw::utils
 
     export template<typename ComponentT>
         requires std::is_arithmetic_v<ComponentT>
+    struct RectT;
+
+    export template<typename ComponentT>
+        requires std::is_arithmetic_v<ComponentT>
     struct SizeT;
 
     export template<typename ComponentT>
@@ -52,9 +57,15 @@ export namespace oglfw::utils
     using Offset = OffsetT<int>;
     using Offsetf = OffsetT<double>;
 
+    template<typename ComponentT>
+        requires std::is_arithmetic_v<ComponentT>
+    using PosT = Vec2T<ComponentT>;
     using Pos = Vec2T<int>;
     using Posf = Vec2T<double>;
     using Posu = Vec2T<std::uint32_t>;
+
+    using Rect = RectT<int>;
+    using Rectf = RectT<double>;
 
     using Size = Vec2T<std::uint32_t>;
     using Sizef = Vec2T<double>;
@@ -124,6 +135,204 @@ export namespace oglfw::utils
     //=======================================================================
     export template<typename ComponentT>
         requires std::is_arithmetic_v<ComponentT>
+    struct RectT
+    {
+        ComponentT x_left{ ComponenT(0) };
+        ComponentT x_right{ ComponentT(0) };
+        ComponentT y_top{ ComponentT(0) };
+        ComponentT y_bottom{ ComponentT(0) };
+
+        inline RectT() noexcept = default;
+
+        inline RectT(const ComponentT left, const ComponentT top, const ComponentT right, const ComponentT bottom) noexcept
+            : x_left(std::min(left, right))
+            , x_right(std::max(left, right))
+            , y_top(std::min(top, bottom))
+            , y_bottom(std::max(top, bottom))
+        {}
+
+        inline RectT(const PosT<ComponentT>& top_left_pos, const PosT<ComponentT>& bottom_right_pos) noexcept
+            : x_left(std::min(top_left_pos.x, bottom_right_pos.x))
+            , x_right(std::max(top_left_pos.x, bottom_right_pos.x))
+            , y_top(std::min(top_left_pos.y, bottom_right_pos.y))
+            , y_bottom(std::max(top_left_pos.y, bottom_right_pos.y))
+        {}
+
+        inline RectT(const PosT<ComponentT>& top_left_pos, const SizeT<ComponentT>& size) noexcept
+            : x_left(top_left_pos.x)
+            , x_right(top_left_pos.x + size.sx)
+            , y_top(top_left_pos.y)
+            , y_bottom(top_left_pos.y + size.sy)
+        {}
+
+        inline virtual ~RectT() noexcept = default;
+
+        inline RectT(const RectT&) noexcept = default;
+        inline RectT(RectT&&) noexcept = default;
+
+        inline RectT& operator= (const RectT&) noexcept = default;
+        inline RectT& operator= (RectT&&) noexcept = default;
+
+        [[nodiscard]]
+        inline const ComponentT height() const noexcept
+        {
+            return y_bottom - y_top;
+        }
+
+        template<typename T1, typename T2>
+            requires std::is_arithmetic_v<T1> && std::is_arithmetic_v<T2>
+        inline void move(const T1 x_offset, const T2 y_offset) noexcept
+        {
+            x_left += ComponentT(x_offset);
+            x_right += ComponentT(x_offset);
+            y_top += ComponentT(y_offset);
+            y_bottom += ComponentT(y_offset);
+        }
+
+        template<typename T>
+            requires std::is_arithmetic<T>
+        inline void move(const OffsetT<T>& offset) noexcept
+        {
+            move(offset.dx, offset.dy);
+        }
+
+        template<typename T>
+            requires std::is_arithmetic<T>
+        inline void move(const Vec2T<T>& offset) noexcept
+        {
+            move(offset.x, offset.y);
+        }
+
+        [[nodiscard]]
+        inline const PosT<ComponentT> pos() const noexcept
+        {
+            return PosT<ComponentT>(x_left, y_top);
+        }
+
+        template<typename T1, typename T2>
+            requires std::is_arithmetic_v<T1> && std::is_arithmetic_v<T2>
+        inline void resize(const T1 new_width, const T2 new_height)
+        {
+            assert(new_width >= T1(0) && new_height >= T2(0));
+            x_right = x_left + new_width;
+            y_bottom = y_top + new_height;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void resize(const SizeT<T>& new_size) noexcept
+        {
+            x_right = x_left + new_size.sx;
+            y_bottom = y_top + new_size.sy;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void resize(const Vec2T<T>& new_size) 
+        {
+            assert(new_size.x >= T(0) && new_size.y >= T(0));
+            x_right = x_left + new_size.x;
+            y_bottom = y_top + new_size.y;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void scale(const T scale)
+        {
+            assert(scale >= T(0));
+            const ComponentT new_width{ scale * width() };
+            const ComponentT new_height{ scale * height() };
+            x_right = x_left + new_width;
+            y_bottom = y_top + new_height;
+        }
+
+        template<typename T1, typename T2>
+            requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
+        inline void scale(const T1 scale_x, const T2 scale_y)
+        {
+            assert(scale_x >= T1(0) && scale_y >= T2(0));
+            const ComponentT new_width{ scale_x * width() };
+            const ComponentT new_height{ scale_y * height() };
+            x_right = x_left + new_width;
+            y_bottom = y_top + new_height;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void scale(const OffsetT<T> scale)
+        {
+            assert(scale.dx >= T(0) && scale.dy >= T(0));
+            const ComponentT new_width{ scale.dx * width() };
+            const ComponentT new_height{ scale.dy * height() };
+            x_right = x_left + new_width;
+            y_bottom = y_top + new_height;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void scale(const Vec2T<T> scale)
+        {
+            assert(scale.x >= T(0) && scale.y >= T(0));
+            const ComponentT new_width{ scale.x * width() };
+            const ComponentT new_height{ scale.y * height() };
+            x_right = x_left + new_width;
+            y_bottom = y_top + new_height;
+        }
+
+        inline void set(const ComponentT left, const ComponentT top, const ComponentT right, const ComponentT bottom) noexcept
+        {
+            x_left = std::min(left, right);
+            x_right = std::max(left, right);
+            y_top = std::min(top, bottom);
+            y_bottom = std::max(top, bottom);
+        }
+
+        inline void set(const PosT<ComponentT>& top_left_pos, const PosT<ComponentT>& bottom_right_pos) noexcept
+        {
+            x_left = std::min(top_left_pos.x, bottom_right_pos.x);
+            x_right = std::max(top_left_pos.x, bottom_right_pos.x);
+            y_top = std::min(top_left_pos.y, bottom_right_pos.y);
+            y_bottom = std::max(top_left_pos.y, bottom_right_pos.y);
+        }
+
+        inline void set(const PosT<ComponentT>& top_left_pos, const SizeT<ComponentT>& size) noexcept
+        {
+            x_left = top_left_pos.x;
+            x_right = top_left_pos.x + size.sx;
+            y_top = top_left_pos.y;
+            y_bottom = top_left_pos.y + size.sy;
+        }
+
+        inline void set_pos(const ComponentT left, const ComponentT top) noexcept
+        {
+            x_right += left - x_left;
+            y_bottom += top - y_top;
+            x_left = left;
+            y_top = top;
+        }
+
+        inline void set_pos(const PosT<ComponentT>& new_pos) noexcept
+        {
+            set_pos(new_pos.x, new_pos.y);
+        }
+
+        [[nodiscard]]
+        inline const SizeT<ComponentT> size() const noexcept
+        {
+            return SizeT<ComponentT>(width(), height());
+        }
+
+        [[nodiscard]]
+        inline const ComponentT width() const noexcept
+        {
+            return x_right - x_left;
+        }
+    };
+
+
+    //=======================================================================
+    export template<typename ComponentT>
+        requires std::is_arithmetic_v<ComponentT>
     struct SizeT
     {
         ComponentT sx{ ComponenT(0) };
@@ -134,9 +343,11 @@ export namespace oglfw::utils
 
         template<typename T1, typename T2>
             requires std::is_arithmetic<T1>&& std::is_arithmetic<T2>
-        inline SizeT(const T1 sx_, const T2 sy_) noexcept
+        inline SizeT(const T1 sx_, const T2 sy_)
             : sx(ComponenT(sx_)), sy(ComponenT(sy_))
-        {}
+        {
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+        }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -146,9 +357,11 @@ export namespace oglfw::utils
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline SizeT(const Vec2T<T>& vec) noexcept
+        inline SizeT(const Vec2T<T>& vec)
             : sx(ComponenT(vec.x)), sy(ComponentT(vec.y))
-        {}
+        {
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+        }
 
         virtual inline ~SizeT() noexcept = default;
 
@@ -165,10 +378,11 @@ export namespace oglfw::utils
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline SizeT& operator= (const Vec2T<T>& vec) noexcept
+        inline SizeT& operator= (const Vec2T<T>& vec)
         {
             sx = ComponentT(vec.x);
             sy = ComponentT(vec.y);
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
             return *this;
         }
 
@@ -185,46 +399,51 @@ export namespace oglfw::utils
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline SizeT& operator+= (const Vec2T<T>& other) noexcept
+        inline SizeT& operator+= (const Vec2T<T>& other)
         {
             sx += ComponentT(other.x);
             sy += ComponentT(other.y);
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
             return *this;
         }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline SizeT& operator+= (const OffsetT<T>& offset) noexcept
+        inline SizeT& operator+= (const OffsetT<T>& offset)
         {
             sx += ComponentT(offset.dx);
             sy += ComponentT(offset.dy);
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
             return *this;
         }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline SizeT& operator-= (const SizeT<T>& other) noexcept
+        inline SizeT& operator-= (const SizeT<T>& other)
         {
             sx -= ComponentT(other.sx);
             sy -= ComponentT(other.sy);
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
             return *this;
         }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline SizeT& operator-= (const Vec2T<T>& other) noexcept
+        inline SizeT& operator-= (const Vec2T<T>& other)
         {
             sx -= ComponentT(other.x);
             sy -= ComponentT(other.y);
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
             return *this;
         }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline SizeT& operator-= (const OffsetT<T>& offset) noexcept
+        inline SizeT& operator-= (const OffsetT<T>& offset)
         {
             sx -= ComponentT(offset.dx);
             sy -= ComponentT(offset.dy);
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
             return *this;
         }
 
@@ -232,7 +451,7 @@ export namespace oglfw::utils
             requires std::is_arithmetic<T>
         inline SizeT& operator*= (const T scaling) noexcept
         {
-            assert(scaling > ComponentT(0));
+            assert(scaling >= ComponentT(0));
             sx *= scaling;
             sy *= scaling;
             return *this;
@@ -330,7 +549,6 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT operator/ (const T scaling)
         {
-            assert(scaling > T(0));
             SizeT res{ *this };
             res /= scaling;
             return res;
@@ -340,17 +558,18 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
         inline void scale(const T1 sx, const T2 sy)
         {
-            assert(sx > T1(0) && sy > T2(0));
             sx *= sx;
             sy *= sy;
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
         }
 
         template<typename T1, typename T2>
             requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
         inline void set(const T1 sx_, const T2 sy_)
         {
-            sx = ComponentT(sx);
-            sy = ComponentT(sy);
+            sx = ComponentT(sx_);
+            sy = ComponentT(sy_);
+            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
         }
 
     };
