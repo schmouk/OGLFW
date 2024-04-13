@@ -25,6 +25,7 @@ SOFTWARE.
 module;
 
 #include <algorithm>
+#include <cassert>
 #include <type_traits>
 		
 
@@ -67,9 +68,9 @@ export namespace oglfw::utils
     using Rect = RectT<int>;
     using Rectf = RectT<double>;
 
-    using Size = Vec2T<std::uint32_t>;
-    using Sizef = Vec2T<double>;
-    using Sizeu = Size;
+    using Size = SizeT<int>;
+    using Sizef = SizeT<double>;
+    using Sizeu = SizeT<std::uint32_t>;
 
     using Vec2D = Vec2T<int>;
     using Vec2f = Vec2T<double>;
@@ -81,8 +82,8 @@ export namespace oglfw::utils
         requires std::is_arithmetic_v<ComponentT>
     struct OffsetT
     {
-        ComponentT dx{ ComponenT(0) };
-        ComponentT dy{ ComponenT(0) };
+        ComponentT dx{ ComponentT(0) };
+        ComponentT dy{ ComponentT(0) };
 
 
         inline OffsetT() noexcept = default;
@@ -90,7 +91,7 @@ export namespace oglfw::utils
         template<typename T1, typename T2>
             requires std::is_arithmetic<T1>&& std::is_arithmetic<T2>
         inline OffsetT(const T1 dx_, const T2 dy_) noexcept
-            : dx(ComponenT(dx_)), dy(ComponenT(dy_))
+            : dx(ComponentT(dx_)), dy(ComponentT(dy_))
         {}
 
         template<typename T>
@@ -102,7 +103,7 @@ export namespace oglfw::utils
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline OffsetT(const OffsetT<T>& other) noexcept
-            : dx(ComponenT(other.dx)), dy(ComponentT(dy))
+            : dx(ComponentT(other.dx)), dy(ComponentT(dy))
         {}
 
         virtual inline ~OffsetT() noexcept = default;
@@ -137,7 +138,7 @@ export namespace oglfw::utils
         requires std::is_arithmetic_v<ComponentT>
     struct RectT
     {
-        ComponentT x_left{ ComponenT(0) };
+        ComponentT x_left{ ComponentT(0) };
         ComponentT x_right{ ComponentT(0) };
         ComponentT y_top{ ComponentT(0) };
         ComponentT y_bottom{ ComponentT(0) };
@@ -335,8 +336,8 @@ export namespace oglfw::utils
         requires std::is_arithmetic_v<ComponentT>
     struct SizeT
     {
-        ComponentT sx{ ComponenT(0) };
-        ComponentT sy{ ComponenT(0) };
+        ComponentT sx{ ComponentT(0) };
+        ComponentT sy{ ComponentT(0) };
 
 
         inline SizeT() noexcept = default;
@@ -344,7 +345,7 @@ export namespace oglfw::utils
         template<typename T1, typename T2>
             requires std::is_arithmetic<T1>&& std::is_arithmetic<T2>
         inline SizeT(const T1 sx_, const T2 sy_)
-            : sx(ComponenT(sx_)), sy(ComponenT(sy_))
+            : sx(ComponentT(sx_)), sy(ComponentT(sy_))
         {
             assert(sx >= ComponentT(0) && sy >= ComponentT(0));
         }
@@ -352,13 +353,13 @@ export namespace oglfw::utils
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline SizeT(const SizeT<T>& other) noexcept
-            : sx(ComponenT(other.sx)), sy(ComponentT(sy))
+            : sx(ComponentT(other.sx)), sy(ComponentT(sy))
         {}
 
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline SizeT(const Vec2T<T>& vec)
-            : sx(ComponenT(vec.x)), sy(ComponentT(vec.y))
+            : sx(ComponentT(vec.x)), sy(ComponentT(vec.y))
         {
             assert(sx >= ComponentT(0) && sy >= ComponentT(0));
         }
@@ -580,8 +581,8 @@ export namespace oglfw::utils
         requires std::is_arithmetic_v<ComponentT>
     struct Vec2T
     {
-        ComponentT x{ ComponenT(0) };
-        ComponentT y{ ComponenT(0) };
+        ComponentT x{ ComponentT(0) };
+        ComponentT y{ ComponentT(0) };
 
 
         inline Vec2T() noexcept = default;
@@ -589,7 +590,7 @@ export namespace oglfw::utils
         template<typename T1, typename T2>
             requires std::is_arithmetic<T1> && std::is_arithmetic<T2>
         inline Vec2T(const T1 x_, const T2 y_) noexcept
-            : x(ComponenT(x_)), y(ComponenT(y_))
+            : x(ComponentT(x_)), y(ComponentT(y_))
         {}
 
         virtual inline ~Vec2T() noexcept = default;
@@ -597,19 +598,19 @@ export namespace oglfw::utils
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline Vec2T(const Vec2T<T>& other) noexcept
-            : x(ComponenT(other.x)), y(ComponentT(y))
+            : x(ComponentT(other.x)), y(ComponentT(y))
         {}
 
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline Vec2T(const SizeT<T>& size) noexcept
-            : x(ComponenT(size.sx)), y(ComponentT(size.sy))
+            : x(ComponentT(size.sx)), y(ComponentT(size.sy))
         {}
 
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline Vec2T(const OffsetT<T>& offset) noexcept
-            : x(ComponenT(offset.dx)), y(ComponentT(offset.dy))
+            : x(ComponentT(offset.dx)), y(ComponentT(offset.dy))
         {}
 
         inline Vec2T(Vec2T&&) noexcept = default;

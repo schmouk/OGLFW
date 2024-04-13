@@ -37,11 +37,17 @@ export namespace oglfw::video
 {
     //=======================================================================
     export using VideoMode = GLFWvidmode;
+    /*
+    * int width;                        // the resolution width of this video mode (in pixels)
+    * int height;                       // the resolution height of this video mode (in pixels)
+    * int redBits, greenBits, blueBits; // the depth of each color component, in bits per pixel
+    * int refreshRate;                  // the value in Hz of the refreshing rate of this video mode
+    */
 
     export using VideoModesList = std::vector<VideoMode>;
 
 
-    export VideoModesList set_video_modes_list(const GLFWvidmode* vid_modes_list, const int vid_modes_count) noexcept
+    export VideoModesList get_video_modes_list(const GLFWvidmode* vid_modes_list, const int vid_modes_count) noexcept
     {
         VideoModesList res;
 

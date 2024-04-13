@@ -29,6 +29,9 @@ module;
 
 module oglfw:init;
 
+import oglfw;
+
+
 //===========================================================================
 namespace oglfw::init
 {
@@ -79,6 +82,9 @@ namespace oglfw::init
                 // and if not ok, let's call the initialization error handler
                 handle_init_error();
             }
+
+            // some stuff has to be done with monitors
+            glfwSetMonitorCallback(Monitor::monitor_callback);
 
             this->_already_inited = true;
         }
