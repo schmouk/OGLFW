@@ -24,8 +24,10 @@ SOFTWARE.
 
 export module oglfw;
 
+export import :context;
 export import :errors;
 export import :init;
+export import :monitor;
 export import :utils;
 export import :video;
 export import :window;

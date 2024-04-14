@@ -29,7 +29,7 @@ module;
 
 module oglfw:init;
 
-import oglfw;
+import :monitor;
 
 
 //===========================================================================
@@ -84,7 +84,7 @@ namespace oglfw::init
             }
 
             // some stuff has to be done with monitors
-            glfwSetMonitorCallback(Monitor::monitor_callback);
+            glfwSetMonitorCallback(oglfw::monitor::Monitors::monitor_callback);
 
             this->_already_inited = true;
         }
