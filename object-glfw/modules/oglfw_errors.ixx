@@ -101,7 +101,7 @@ export namespace oglfw::err
         [[nodiscard]]
         static inline const bool is_ok() noexcept
         {
-            return get_curent_error() == GLFW_NO_ERROR;
+            return is_ok(get_curent_error());
         }
 
         [[nodiscard]]

@@ -45,6 +45,9 @@ export namespace oglfw::monitor
     export class Monitor;
     export class Monitors;
 
+    //export Monitor NULL_MONITOR;
+
+
     // types wrappers
     using MonitorsList = std::vector<Monitor>;
 
@@ -105,7 +108,6 @@ export namespace oglfw::monitor
             GLFWgammaramp* _ramp_ptr{ nullptr };
             const Monitor* _monitor_ptr{ nullptr };
         };
-
 
 
         inline Monitor(GLFWmonitor* monitor_ptr) noexcept
@@ -282,5 +284,9 @@ export namespace oglfw::monitor
         static inline MonitorsList _monitors_list{};
 
     };
+
+
+    //=======================================================================
+    export Monitor NULL_MONITOR(nullptr);
 
 }
