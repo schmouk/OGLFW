@@ -88,6 +88,8 @@ export namespace oglfw::wndw
     
         Window(const int width, const int height) noexcept;
 
+        Window(const int x_left, const int y_top, const int width, const int height) noexcept;
+
         Window(const int width, const int height, const std::string& title) noexcept;
 
         Window(const int width, const int height, Window& sharing_window) noexcept;
@@ -153,6 +155,10 @@ export namespace oglfw::wndw
         static inline void close_callback(GLFWwindow* window_hndl) noexcept
         {
             // TODO: implement this
+            auto window_ptr{ _windows_list.find(window_hndl) };
+            if (window_ptr != nullptr) {
+                window_ptr->_close_window();
+            }
         }
 
 
@@ -162,11 +168,38 @@ export namespace oglfw::wndw
         }
     
 
+        inline const int get_height() const noexcept
+        {
+            oglfw::utils::Size size{ this->get_size<int>() };
+            return size.sx;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline oglfw::utils::SizeT<T> get_size() const noexcept
+        {
+            if (this->is_ok()) [[likely]] {
+                int width, height;
+                glfwGetWindowSize(this->get_handle(), &width, &height);
+                return oglfw::utils::SizeT<T>(T(width), T(height));
+            }
+            else [[unlikely]] {
+                return oglfw::utils::SizeT<T>(T(0), T(0));
+            }
+        }
+
+        inline const int get_width() const noexcept
+        {
+            oglfw::utils::Size size{ this->get_size<int>() };
+            return size.sy;
+        }
+
+
         inline void* get_user_pointer() const noexcept
         {
             if (this->is_ok()) [[likely]]
                 return glfwGetWindowUserPointer(this->get_handle());
-            else
+            else [[unlikely]]
                 return nullptr;
         }
 
@@ -221,6 +254,22 @@ export namespace oglfw::wndw
 
         const bool set_full_screen(const oglfw::monitor::Monitor& monitor, const int refresh_rate) const noexcept;
 
+
+        inline void set_size(const int width, const int height) const noexcept
+        {
+            if (this->is_ok()) {
+                glfwSetWindowSize(this->get_handle(), width, height);
+            }
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void set_size(const oglfw::utils::SizeT<T>& size) const noexcept
+        {
+            set_size(int(size.sx), int(size.sy));
+        }
+
+
         const bool set_user_pointer(void* pointer) const noexcept;
 
 
@@ -236,6 +285,9 @@ export namespace oglfw::wndw
 
     protected:
         GLFWwindow* _window_ptr{ nullptr };
+
+        virtual inline void _close_window()
+        {}
 
 
     private:
@@ -274,15 +326,15 @@ export namespace oglfw::wndw
             Window* find(GLFWwindow* window_hndl) const noexcept
             {
                 auto it = std::find_if(this->begin(), this->end(), [window_hndl](Window* w) { return w->get_handle() == window_hndl; });
-                if (it != this->end()) [[likely]]
+                if (it != this->end())
                     return *it;
-                else [[unlikely]]
+                else
                     return nullptr;
             }
 
             inline void push_back(Window* window_ptr) noexcept
             {
-                if (window_ptr && window_ptr->is_ok())
+                if (window_ptr && window_ptr->is_ok() && find(window_ptr->get_handle()) != nullptr)
                     MyContainerClass::push_back(window_ptr);
             }
 

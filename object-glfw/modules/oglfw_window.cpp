@@ -251,6 +251,7 @@ namespace oglfw::wndw
             return false;
     }
 
+
     const bool Window::set_full_screen(
         const oglfw::monitor::Monitor& monitor,
         const int x_left,
@@ -303,10 +304,14 @@ namespace oglfw::wndw
             return false;
     }
 
+
     void Window::_set_hints(const WindowHints hints, const oglfw::context::Context& context) noexcept
     {
         // TODO: implement this
 
     }
+
+
+    Window::_WindowsList Window::_windows_list{};
 
 }
