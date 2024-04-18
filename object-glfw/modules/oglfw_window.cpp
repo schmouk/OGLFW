@@ -70,16 +70,26 @@ namespace oglfw::wndw
 
     Window::Window(const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept
     {
-        _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), nullptr);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), nullptr);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
     {
-        _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), nullptr);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), nullptr);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(oglfw::monitor::Monitor& monitor) noexcept
@@ -98,30 +108,50 @@ namespace oglfw::wndw
 
     Window::Window(const int width, const int height, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), sharing_window.get_handle());
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), sharing_window.get_handle());
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), sharing_window.get_handle());
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), sharing_window.get_handle());
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _window_ptr = _create_full_screen("", monitor, sharing_window);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = _create_full_screen("", monitor, sharing_window);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _window_ptr = _create_full_screen(title, monitor, sharing_window);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = _create_full_screen(title, monitor, sharing_window);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height) noexcept
@@ -158,66 +188,106 @@ namespace oglfw::wndw
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), nullptr);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), nullptr);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), nullptr);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), nullptr);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, oglfw::monitor::Monitor& monitor) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = _create_full_screen("", monitor);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = _create_full_screen("", monitor);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = _create_full_screen(title, monitor);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = _create_full_screen(title, monitor);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), sharing_window.get_handle());
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), sharing_window.get_handle());
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), sharing_window.get_handle());
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = glfwCreateWindow(width, height, title.c_str(), monitor.get_handle(), sharing_window.get_handle());
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = _create_full_screen("", monitor, sharing_window);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = _create_full_screen("", monitor, sharing_window);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
-        _set_hints(window_hints, context);
-        _window_ptr = _create_full_screen(title, monitor, sharing_window);
-        _set_user_ptr();
-        _windows_list.push_back(this);
+        if (monitor.is_ok()) [[likely]] {
+            _set_hints(window_hints, context);
+            _window_ptr = _create_full_screen(title, monitor, sharing_window);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+        }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+        }
     }
 
 
@@ -417,6 +487,29 @@ namespace oglfw::wndw
         else [[unlikely]]
             return false;
     }
+
+
+    GLFWwindow* Window::_create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor) const noexcept
+    {
+        if (monitor.is_ok()) [[likely]] {
+            oglfw::video::VideoMode video_mode{ monitor.get_current_video_mode() };
+            return glfwCreateWindow(video_mode.width, video_mode.height, title.c_str(), monitor.get_handle(), nullptr);
+            }
+        else [[unlikely]]
+            return nullptr;
+    }
+
+
+    GLFWwindow* Window::_create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor, const Window& sharing_window) const noexcept
+    {
+        if (monitor.is_ok()) [[likely]] {
+            oglfw::video::VideoMode video_mode{ monitor.get_current_video_mode() };
+            return glfwCreateWindow(video_mode.width, video_mode.height, title.c_str(), monitor.get_handle(), sharing_window.get_handle());
+            }
+        else [[unlikely]]
+            return nullptr;
+    }
+
 
 
     void Window::_set_hints(const WindowHints hints, const oglfw::context::Context& context) noexcept

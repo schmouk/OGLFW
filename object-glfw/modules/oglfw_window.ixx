@@ -331,25 +331,14 @@ export namespace oglfw::wndw
         static inline constexpr int _MIN_HEIGHT{ 0 };
         static inline constexpr int _MIN_WIDTH{ 0 };
 
-        inline GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor) noexcept
-        {
-            oglfw::video::VideoMode video_mode{ monitor.get_current_video_mode() };
-            return glfwCreateWindow(video_mode.width, video_mode.height, title.c_str(), monitor.get_handle(), nullptr);
-        }
 
+        GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor) const noexcept;
 
-        inline GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor, const Window& sharing_window) noexcept
-        {
-            oglfw::video::VideoMode video_mode{ monitor.get_current_video_mode() };
-            return glfwCreateWindow(video_mode.width, video_mode.height, title.c_str(), monitor.get_handle(), sharing_window.get_handle());
-        }
-
+        GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor, const Window& sharing_window) const noexcept;
 
         void _set_all_callbacks(GLFWwindow* window_hndl) noexcept;
 
-
         void _set_hints(const WindowHints hints, const oglfw::context::Context& context) noexcept;
-
 
         inline void _set_user_ptr() noexcept
         {
