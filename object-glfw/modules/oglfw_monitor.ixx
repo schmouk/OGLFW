@@ -137,12 +137,12 @@ export namespace oglfw::monitor
 
         inline const double get_content_x_scale() const noexcept
         {
-            return _content_scaling.sx;
+            return _content_scaling.sx();
         }
 
         inline const double get_content_y_scale() const noexcept
         {
-            return _content_scaling.sy;
+            return _content_scaling.sy();
         }
 
         inline GammaRamp& get_current_gamma_ramp() noexcept
@@ -172,7 +172,7 @@ export namespace oglfw::monitor
 
         inline const int get_physical_height_mm() const noexcept
         {
-            return _physical_size.sy;
+            return _physical_size.sy();
         }
 
         inline const utils::Sizeu get_physical_size_mm() const noexcept
@@ -182,7 +182,7 @@ export namespace oglfw::monitor
 
         inline const int get_physical_width_mm() const noexcept
         {
-            return _physical_size.sx;
+            return _physical_size.sx();
         }
 
         inline const int get_pixel_blue_depth() const noexcept

@@ -152,7 +152,25 @@ export namespace oglfw::wndw
         }
 
 
+        void clear_min_size_limits() noexcept;
+
+        void clear_max_size_limits() noexcept;
+
+        void clear_size_limits() noexcept;
+
+
         static void close_callback(GLFWwindow* window_hndl) noexcept;
+
+
+        inline const oglfw::utils::Size& get_current_max_size() const noexcept
+        {
+            return this->_max_size;
+        }
+
+        inline const oglfw::utils::Size& get_current_min_size() const noexcept
+        {
+            return this->_min_size;
+        }
 
 
         void get_frame_thickness(int& left, int& top, int& right, int& bottom) noexcept;
@@ -167,15 +185,17 @@ export namespace oglfw::wndw
         inline const int get_height() const noexcept
         {
             oglfw::utils::Size size{ this->get_size() };
-            return size.sx;
+            return size.height;
         }
 
+
         oglfw::utils::Size get_size() const noexcept;
+
 
         inline const int get_width() const noexcept
         {
             oglfw::utils::Size size{ this->get_size() };
-            return size.sy;
+            return size.width;
         }
 
 
@@ -227,7 +247,7 @@ export namespace oglfw::wndw
 
         inline void resize(const oglfw::utils::Size& size) const noexcept
         {
-            resize(int(size.sx), int(size.sy));
+            resize(int(size.width), int(size.height));
         }
 
         static void resize_callback(GLFWwindow* window_hndl, int width, int height) noexcept;
@@ -254,6 +274,28 @@ export namespace oglfw::wndw
         const bool set_full_screen(const oglfw::monitor::Monitor& monitor, const int refresh_rate) const noexcept;
 
 
+        inline void set_max_size(const oglfw::utils::Size& max_size)
+        {
+            set_max_size(max_size.width, max_size.height);
+        }
+
+        void set_max_size(int max_width, int max_height);
+
+        inline void set_min_size(const oglfw::utils::Size& min_size)
+        {
+            set_min_size(min_size.width, min_size.height);
+        }
+
+        void set_min_size(int min_width, int min_height);
+
+        inline void set_size_limits(const oglfw::utils::Size& min_size, const oglfw::utils::Size& max_size)
+        {
+            set_size_limits(min_size.width, min_size.height, max_size.width, max_size.height);
+        }
+
+        void set_size_limits(int min_width, int min_height, int max_width, int max_height);
+
+
         const bool set_user_pointer(void* pointer) const noexcept;
 
 
@@ -271,6 +313,10 @@ export namespace oglfw::wndw
 
         GLFWwindow* _window_ptr{ nullptr };
 
+        oglfw::utils::Size _max_size{ _MAX_WIDTH, _MAX_HEIGHT };
+        oglfw::utils::Size _min_size{ _MIN_WIDTH, _MIN_HEIGHT };
+
+
         virtual inline void _close_window()
         {}
 
@@ -279,6 +325,11 @@ export namespace oglfw::wndw
 
 
     private:
+
+        static inline constexpr int _MAX_HEIGHT{ 32'767 };
+        static inline constexpr int _MAX_WIDTH{ 65'535 };
+        static inline constexpr int _MIN_HEIGHT{ 0 };
+        static inline constexpr int _MIN_WIDTH{ 0 };
 
         inline GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor) noexcept
         {

@@ -230,6 +230,38 @@ namespace oglfw::wndw
     }
 
 
+    void Window::clear_min_size_limits() noexcept
+    {
+        if (this->is_ok()) {
+            this->_min_size.width = this->_MIN_WIDTH;
+            this->_min_size.height = this->_MIN_HEIGHT;
+            glfwSetWindowSizeLimits(this->get_handle(), GLFW_DONT_CARE, GLFW_DONT_CARE, this->_max_size.width, this->_max_size.height);
+        }
+    }
+
+
+    void Window::clear_max_size_limits() noexcept
+    {
+        if (this->is_ok()) {
+            this->_max_size.width = this->_MAX_WIDTH;
+            this->_max_size.height = this->_MAX_HEIGHT;
+            glfwSetWindowSizeLimits(this->get_handle(), this->_min_size.width, this->_min_size.height, GLFW_DONT_CARE, GLFW_DONT_CARE);
+        }
+    }
+
+
+    void Window::clear_size_limits() noexcept
+    {
+        if (this->is_ok()) {
+            this->_min_size.width = this->_MIN_WIDTH;
+            this->_min_size.height = this->_MIN_HEIGHT;
+            this->_max_size.width = this->_MAX_WIDTH;
+            this->_max_size.height = this->_MAX_HEIGHT;
+            glfwSetWindowSizeLimits(this->get_handle(), GLFW_DONT_CARE, GLFW_DONT_CARE, GLFW_DONT_CARE, GLFW_DONT_CARE);
+        }
+    }
+
+
     void Window::close_callback(GLFWwindow* window_hndl) noexcept
     {
         auto window_ptr{ Window::_windows_list.find(window_hndl) };
@@ -344,6 +376,34 @@ namespace oglfw::wndw
         }
         else [[unlikely]] {
             return false;
+        }
+    }
+
+
+    void Window::set_max_size(int max_width, int max_height)
+    {
+        if (this->is_ok()){
+            this->_max_size = std::move(oglfw::utils::Size(max_width, max_height));
+            glfwSetWindowSizeLimits(this->get_handle(), GLFW_DONT_CARE, GLFW_DONT_CARE, max_width, max_height);
+        }
+    }
+
+
+    void Window::set_min_size(int min_width, int min_height)
+    {
+        if (this->is_ok()) {
+            this->_min_size = std::move(oglfw::utils::Size(min_width, min_height));
+            glfwSetWindowSizeLimits(this->get_handle(), min_width, min_height, GLFW_DONT_CARE, GLFW_DONT_CARE);
+        }
+    }
+
+
+    void Window::set_size_limits(int min_width, int min_height, int max_width, int max_height)
+    {
+        if (this->is_ok()) {
+            this->_min_size = std::move(oglfw::utils::Size(min_width, min_height));
+            this->_max_size = std::move(oglfw::utils::Size(max_width, max_height));
+            glfwSetWindowSizeLimits(this->get_handle(), min_width, min_height, max_width, max_height);
         }
     }
 

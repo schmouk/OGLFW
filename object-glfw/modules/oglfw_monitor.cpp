@@ -70,7 +70,7 @@ namespace oglfw::monitor
         _available_video_modes = oglfw::video::get_video_modes_list(vid_modes_list, vid_modes_count);
 
         // sets the physical size of this monitor (in mm)
-        glfwGetMonitorPhysicalSize(_monitor_ptr, &_physical_size.sx, &_physical_size.sy);
+        glfwGetMonitorPhysicalSize(_monitor_ptr, &_physical_size.width, &_physical_size.height);
 
         // sets the content scaling
         float h, w;

@@ -161,9 +161,9 @@ export namespace oglfw::utils
 
         inline RectT(const PosT<ComponentT>& top_left_pos, const SizeT<ComponentT>& size) noexcept
             : x_left(top_left_pos.x)
-            , x_right(top_left_pos.x + size.sx)
+            , x_right(top_left_pos.x + size.width)
             , y_top(top_left_pos.y)
-            , y_bottom(top_left_pos.y + size.sy)
+            , y_bottom(top_left_pos.y + size.height)
         {}
 
         inline virtual ~RectT() noexcept = default;
@@ -223,8 +223,8 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline void resize(const SizeT<T>& new_size) noexcept
         {
-            x_right = x_left + new_size.sx;
-            y_bottom = y_top + new_size.sy;
+            x_right = x_left + new_size.width;
+            y_bottom = y_top + new_size.height;
         }
 
         template<typename T>
@@ -299,9 +299,9 @@ export namespace oglfw::utils
         inline void set(const PosT<ComponentT>& top_left_pos, const SizeT<ComponentT>& size) noexcept
         {
             x_left = top_left_pos.x;
-            x_right = top_left_pos.x + size.sx;
+            x_right = top_left_pos.x + size.width;
             y_top = top_left_pos.y;
-            y_bottom = top_left_pos.y + size.sy;
+            y_bottom = top_left_pos.y + size.height;
         }
 
         inline void set_pos(const ComponentT left, const ComponentT top) noexcept
@@ -336,8 +336,8 @@ export namespace oglfw::utils
         requires std::is_arithmetic_v<ComponentT>
     struct SizeT
     {
-        ComponentT sx{ ComponentT(0) };
-        ComponentT sy{ ComponentT(0) };
+        ComponentT width{ ComponentT(0) };
+        ComponentT height{ ComponentT(0) };
 
 
         inline SizeT() noexcept = default;
@@ -345,23 +345,23 @@ export namespace oglfw::utils
         template<typename T1, typename T2>
             requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
         inline SizeT(const T1 sx_, const T2 sy_)
-            : sx(ComponentT(sx_)), sy(ComponentT(sy_))
+            : width(ComponentT(sx_)), height(ComponentT(sy_))
         {
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
         }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline SizeT(const SizeT<T>& other) noexcept
-            : sx(ComponentT(other.sx)), sy(ComponentT(sy))
+            : width(ComponentT(other.width)), height(ComponentT(height))
         {}
 
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline SizeT(const Vec2T<T>& vec)
-            : sx(ComponentT(vec.x)), sy(ComponentT(vec.y))
+            : width(ComponentT(vec.x)), height(ComponentT(vec.y))
         {
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
         }
 
         virtual inline ~SizeT() noexcept = default;
@@ -372,8 +372,8 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator= (const SizeT<T>& other) noexcept
         {
-            sx = ComponentT(other.sx);
-            sy = ComponentT(other.sy);
+            width = ComponentT(other.width);
+            height = ComponentT(other.height);
             return *this;
         }
 
@@ -381,9 +381,9 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator= (const Vec2T<T>& vec)
         {
-            sx = ComponentT(vec.x);
-            sy = ComponentT(vec.y);
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width = ComponentT(vec.x);
+            height = ComponentT(vec.y);
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
             return *this;
         }
 
@@ -393,8 +393,8 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator+= (const SizeT<T>& other) noexcept
         {
-            sx += ComponentT(other.sx);
-            sy += ComponentT(other.sy);
+            width += ComponentT(other.width);
+            height += ComponentT(other.height);
             return *this;
         }
 
@@ -402,9 +402,9 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator+= (const Vec2T<T>& other)
         {
-            sx += ComponentT(other.x);
-            sy += ComponentT(other.y);
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width += ComponentT(other.x);
+            height += ComponentT(other.y);
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
             return *this;
         }
 
@@ -412,9 +412,9 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator+= (const OffsetT<T>& offset)
         {
-            sx += ComponentT(offset.dx);
-            sy += ComponentT(offset.dy);
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width += ComponentT(offset.dx);
+            height += ComponentT(offset.dy);
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
             return *this;
         }
 
@@ -422,9 +422,9 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator-= (const SizeT<T>& other)
         {
-            sx -= ComponentT(other.sx);
-            sy -= ComponentT(other.sy);
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width -= ComponentT(other.width);
+            height -= ComponentT(other.height);
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
             return *this;
         }
 
@@ -432,9 +432,9 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator-= (const Vec2T<T>& other)
         {
-            sx -= ComponentT(other.x);
-            sy -= ComponentT(other.y);
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width -= ComponentT(other.x);
+            height -= ComponentT(other.y);
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
             return *this;
         }
 
@@ -442,9 +442,9 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline SizeT& operator-= (const OffsetT<T>& offset)
         {
-            sx -= ComponentT(offset.dx);
-            sy -= ComponentT(offset.dy);
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width -= ComponentT(offset.dx);
+            height -= ComponentT(offset.dy);
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
             return *this;
         }
 
@@ -453,8 +453,8 @@ export namespace oglfw::utils
         inline SizeT& operator*= (const T scaling) noexcept
         {
             assert(scaling >= ComponentT(0));
-            sx *= scaling;
-            sy *= scaling;
+            width *= scaling;
+            height *= scaling;
             return *this;
         }
 
@@ -463,8 +463,8 @@ export namespace oglfw::utils
         inline SizeT& operator/= (const T scaling)
         {
             assert(scaling > ComponentT(0));
-            sx /= scaling;
-            sy /= scaling;
+            width /= scaling;
+            height /= scaling;
             return *this;
         }
 
@@ -557,20 +557,30 @@ export namespace oglfw::utils
 
         template<typename T1, typename T2>
             requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
-        inline void scale(const T1 sx, const T2 sy)
+        inline void scale(const T1 width, const T2 height)
         {
-            sx *= sx;
-            sy *= sy;
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width *= width;
+            height *= height;
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
         }
 
         template<typename T1, typename T2>
             requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
         inline void set(const T1 sx_, const T2 sy_)
         {
-            sx = ComponentT(sx_);
-            sy = ComponentT(sy_);
-            assert(sx >= ComponentT(0) && sy >= ComponentT(0));
+            width = ComponentT(sx_);
+            height = ComponentT(sy_);
+            assert(width >= ComponentT(0) && height >= ComponentT(0));
+        }
+
+        inline const ComponentT sx() const noexcept
+        {
+            return width;
+        }
+
+        inline const ComponentT sy() const noexcept
+        {
+            return height;
         }
 
     };
@@ -604,7 +614,7 @@ export namespace oglfw::utils
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline Vec2T(const SizeT<T>& size) noexcept
-            : x(ComponentT(size.sx)), y(ComponentT(size.sy))
+            : x(ComponentT(size.width)), y(ComponentT(size.height))
         {}
 
         template<typename T>
@@ -628,8 +638,8 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline Vec2T& operator= (const SizeT<T>& other) noexcept
         {
-            x = ComponentT(other.sx);
-            y = ComponentT(other.sy);
+            x = ComponentT(other.width);
+            y = ComponentT(other.height);
             return *this;
         }
 
@@ -657,8 +667,8 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline Vec2T& operator+= (const SizeT<T>& offset) noexcept
         {
-            x += ComponentT(offset.sx);
-            y += ComponentT(offset.sy);
+            x += ComponentT(offset.width);
+            y += ComponentT(offset.height);
             return *this;
         }
 
@@ -684,8 +694,8 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline Vec2T& operator-= (const SizeT<T>& size) noexcept
         {
-            x -= ComponentT(size.sx);
-            y -= ComponentT(size.sy);
+            x -= ComponentT(size.width);
+            y -= ComponentT(size.height);
             return *this;
         }
 
@@ -831,11 +841,11 @@ export namespace oglfw::utils
 
         template<typename T1, typename T2>
             requires std::is_arithmetic_v<T1> && std::is_arithmetic_v<T2>
-        inline void scale(const T1 sx, const T2 sy)
+        inline void scale(const T1 width, const T2 height)
         {
-            assert(sx > ComponentT(0) && sy > ComponentT(0));
-            x *= sx;
-            y *= sy;
+            assert(width > ComponentT(0) && height > ComponentT(0));
+            x *= width;
+            y *= height;
         }
 
         template<typename T>
@@ -849,7 +859,7 @@ export namespace oglfw::utils
             requires std::is_arithmetic_v<T>
         inline void scale(const SizeT<T>& size)
         {
-            scale(size.sx, size.sy);
+            scale(size.width, size.height);
         }
 
         template<typename T>
