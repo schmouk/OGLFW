@@ -155,6 +155,9 @@ export namespace oglfw::wndw
         static void close_callback(GLFWwindow* window_hndl) noexcept;
 
 
+        void get_frame_thickness(int& left, int& top, int& right, int& bottom) noexcept;
+
+
         inline GLFWwindow* get_handle() const noexcept
         {
             return _window_ptr;

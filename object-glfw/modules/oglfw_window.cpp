@@ -240,6 +240,17 @@ namespace oglfw::wndw
     }
 
 
+    void Window::get_frame_thickness(int& left, int& top, int& right, int& bottom) noexcept
+    {
+        if (this->is_ok()) [[likely]] {
+            glfwGetWindowFrameSize(this->get_handle(), &left, &top, &right, &bottom);
+        }
+        else [[unlikely]] {
+            left = right = top = bottom = 0;
+        }
+    }
+
+
     oglfw::utils::Size Window::get_size() const noexcept
     {
         if (this->is_ok()) [[likely]] {
