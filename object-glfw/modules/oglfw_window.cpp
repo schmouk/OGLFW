@@ -229,6 +229,30 @@ namespace oglfw::wndw
         }
     }
 
+
+    void Window::close_callback(GLFWwindow* window_hndl) noexcept
+    {
+        auto window_ptr{ Window::_windows_list.find(window_hndl) };
+
+        if (window_ptr != nullptr) {
+            window_ptr->_close_window();
+        }
+    }
+
+
+    oglfw::utils::Size Window::get_size() const noexcept
+    {
+        if (this->is_ok()) [[likely]] {
+            int width, height;
+            glfwGetWindowSize(this->get_handle(), &width, &height);
+            return oglfw::utils::Size(int(width), int(height));
+        }
+        else [[unlikely]] {
+            return oglfw::utils::Size(0, 0);
+        }
+    }
+
+
     const bool Window::reset_all_windows_default_hints() const noexcept
     {
         if (this->is_ok()) [[likely]] {
@@ -249,6 +273,25 @@ namespace oglfw::wndw
         }
         else [[unlikely]]
             return false;
+    }
+
+
+    void Window::resize_callback(GLFWwindow* window_hndl, int width, int height) noexcept
+    {
+        auto window_ptr{ Window::_windows_list.find(window_hndl) };
+
+        if (window_ptr != nullptr) {
+            window_ptr->_resize(width, height);
+        }
+    }
+
+
+    void Window::_set_all_callbacks(GLFWwindow* window_hndl) noexcept
+    {
+        if (window_hndl != nullptr) {
+            glfwSetWindowCloseCallback(window_hndl, Window::close_callback);
+            glfwSetWindowSizeCallback(window_hndl, Window::resize_callback);
+        }
     }
 
 

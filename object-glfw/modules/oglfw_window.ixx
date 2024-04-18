@@ -152,14 +152,7 @@ export namespace oglfw::wndw
         }
 
 
-        static inline void close_callback(GLFWwindow* window_hndl) noexcept
-        {
-            // TODO: implement this
-            auto window_ptr{ _windows_list.find(window_hndl) };
-            if (window_ptr != nullptr) {
-                window_ptr->_close_window();
-            }
-        }
+        static void close_callback(GLFWwindow* window_hndl) noexcept;
 
 
         inline GLFWwindow* get_handle() const noexcept
@@ -170,27 +163,15 @@ export namespace oglfw::wndw
 
         inline const int get_height() const noexcept
         {
-            oglfw::utils::Size size{ this->get_size<int>() };
+            oglfw::utils::Size size{ this->get_size() };
             return size.sx;
         }
 
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline oglfw::utils::SizeT<T> get_size() const noexcept
-        {
-            if (this->is_ok()) [[likely]] {
-                int width, height;
-                glfwGetWindowSize(this->get_handle(), &width, &height);
-                return oglfw::utils::SizeT<T>(T(width), T(height));
-            }
-            else [[unlikely]] {
-                return oglfw::utils::SizeT<T>(T(0), T(0));
-            }
-        }
+        oglfw::utils::Size get_size() const noexcept;
 
         inline const int get_width() const noexcept
         {
-            oglfw::utils::Size size{ this->get_size<int>() };
+            oglfw::utils::Size size{ this->get_size() };
             return size.sy;
         }
 
@@ -234,6 +215,21 @@ export namespace oglfw::wndw
         const bool reset_default_hints() const noexcept;
 
 
+        inline void resize(const int width, const int height) const noexcept
+        {
+            if (this->is_ok()) {
+                glfwSetWindowSize(this->get_handle(), width, height);
+            }
+        }
+
+        inline void resize(const oglfw::utils::Size& size) const noexcept
+        {
+            resize(int(size.sx), int(size.sy));
+        }
+
+        static void resize_callback(GLFWwindow* window_hndl, int width, int height) noexcept;
+
+
         inline void set_close_flag() const noexcept
         {
             if (this->is_ok()) {
@@ -255,21 +251,6 @@ export namespace oglfw::wndw
         const bool set_full_screen(const oglfw::monitor::Monitor& monitor, const int refresh_rate) const noexcept;
 
 
-        inline void set_size(const int width, const int height) const noexcept
-        {
-            if (this->is_ok()) {
-                glfwSetWindowSize(this->get_handle(), width, height);
-            }
-        }
-
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline void set_size(const oglfw::utils::SizeT<T>& size) const noexcept
-        {
-            set_size(int(size.sx), int(size.sy));
-        }
-
-
         const bool set_user_pointer(void* pointer) const noexcept;
 
 
@@ -284,18 +265,24 @@ export namespace oglfw::wndw
 
 
     protected:
+
         GLFWwindow* _window_ptr{ nullptr };
 
         virtual inline void _close_window()
         {}
 
+        virtual inline void _resize(const int width, const int height)
+        {}
+
 
     private:
+
         inline GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor) noexcept
         {
             oglfw::video::VideoMode video_mode{ monitor.get_current_video_mode() };
             return glfwCreateWindow(video_mode.width, video_mode.height, title.c_str(), monitor.get_handle(), nullptr);
         }
+
 
         inline GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor, const Window& sharing_window) noexcept
         {
@@ -303,7 +290,12 @@ export namespace oglfw::wndw
             return glfwCreateWindow(video_mode.width, video_mode.height, title.c_str(), monitor.get_handle(), sharing_window.get_handle());
         }
 
+
+        void _set_all_callbacks(GLFWwindow* window_hndl) noexcept;
+
+
         void _set_hints(const WindowHints hints, const oglfw::context::Context& context) noexcept;
+
 
         inline void _set_user_ptr() noexcept
         {

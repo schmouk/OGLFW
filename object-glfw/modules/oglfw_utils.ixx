@@ -343,7 +343,7 @@ export namespace oglfw::utils
         inline SizeT() noexcept = default;
 
         template<typename T1, typename T2>
-            requires std::is_arithmetic<T1>&& std::is_arithmetic<T2>
+            requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
         inline SizeT(const T1 sx_, const T2 sy_)
             : sx(ComponentT(sx_)), sy(ComponentT(sy_))
         {
