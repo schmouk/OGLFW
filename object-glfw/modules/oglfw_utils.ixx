@@ -366,7 +366,7 @@ export namespace oglfw::utils
 
         virtual inline ~SizeT() noexcept = default;
 
-        inline SizeT(SizeT&&) noexcept = default;
+        inline SizeT(const SizeT&) noexcept = default;
 
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -386,8 +386,6 @@ export namespace oglfw::utils
             assert(width >= ComponentT(0) && height >= ComponentT(0));
             return *this;
         }
-
-        inline SizeT& operator= (SizeT&&) noexcept = default;
 
         template<typename T>
             requires std::is_arithmetic_v<T>

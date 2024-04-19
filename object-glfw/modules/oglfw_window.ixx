@@ -25,6 +25,7 @@ SOFTWARE.
 module;
 
 #include <algorithm>
+#include <cassert>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -152,6 +153,15 @@ export namespace oglfw::wndw
         }
 
 
+        inline void clear_aspect_ratio() noexcept
+        {
+            if (this->is_ok()) {
+                glfwSetWindowAspectRatio(this->get_handle(), GLFW_DONT_CARE, GLFW_DONT_CARE);
+                this->_has_aspect_ratio = false;
+            }
+        }
+
+
         void clear_min_size_limits() noexcept;
 
         void clear_max_size_limits() noexcept;
@@ -160,6 +170,14 @@ export namespace oglfw::wndw
 
 
         static void close_callback(GLFWwindow* window_hndl) noexcept;
+
+
+        inline const bool get_aspect_ratio(oglfw::utils::Size& current_ratio) const noexcept
+        {
+            if (this->_has_aspect_ratio)
+                current_ratio = this->_current_aspect_ratio;
+            return this->_has_aspect_ratio;
+        }
 
 
         inline const oglfw::utils::Size& get_current_max_size() const noexcept
@@ -208,6 +226,12 @@ export namespace oglfw::wndw
         }
 
 
+        inline const bool has_aspect_ratio() const noexcept
+        {
+            return this->_has_aspect_ratio;
+        }
+
+
         inline const bool is_close_flag_down() const noexcept
         {
             return !is_close_flag_up();
@@ -251,6 +275,28 @@ export namespace oglfw::wndw
         }
 
         static void resize_callback(GLFWwindow* window_hndl, int width, int height) noexcept;
+
+
+        inline void set_aspect_ratio() const
+        {
+            oglfw::utils::Size current_size{ this->get_size() };
+            this->set_aspect_ratio(current_size.width, current_size.height);
+        }
+
+        inline void set_aspect_ratio(const int x_ratio, const int y_ratio) const
+        {
+            assert(x_ratio > 0 && y_ratio > 0);
+            if (this->is_ok()) {
+                glfwSetWindowAspectRatio(this->get_handle(), x_ratio, y_ratio);
+            }
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline void set_aspect_ratio(const oglfw::utils::SizeT<T>& ratio)
+        {
+            set_aspect_ratio(int(ratio.sx()), int(ratio.sy()));
+        }
 
 
         inline void set_close_flag() const noexcept
@@ -330,6 +376,9 @@ export namespace oglfw::wndw
         static inline constexpr int _MAX_WIDTH{ 65'535 };
         static inline constexpr int _MIN_HEIGHT{ 0 };
         static inline constexpr int _MIN_WIDTH{ 0 };
+
+        oglfw::utils::Size _current_aspect_ratio{ 0, 0 };
+        bool _has_aspect_ratio{ false };
 
 
         GLFWwindow* _create_full_screen(const std::string& title, const oglfw::monitor::Monitor& monitor) const noexcept;
