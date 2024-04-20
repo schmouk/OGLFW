@@ -89,29 +89,35 @@ export namespace oglfw::wndw
     
         Window(const int width, const int height) noexcept;
 
-        Window(const int x_left, const int y_top, const int width, const int height) noexcept;
-
         Window(const int width, const int height, const std::string& title) noexcept;
 
         Window(const int width, const int height, Window& sharing_window) noexcept;
 
         Window(const int width, const int height, const std::string& title, Window& sharing_window) noexcept;
 
-        Window(const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept;
+        Window(const int x_left, const int y_top, const int width, const int height) noexcept;
 
-        Window(const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept;
+        Window(const int x_left, const int y_top, const int width, const int height, const std::string& title) noexcept;
+
+        Window(const int x_left, const int y_top, const int width, const int height, Window& sharing_window) noexcept;
+
+        Window(const int x_left, const int y_top, const int width, const int height, const std::string& title, Window& sharing_window) noexcept;
 
         Window(oglfw::monitor::Monitor& monitor) noexcept;
 
+        Window(oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept;
+
         Window(const std::string& title, oglfw::monitor::Monitor& monitor) noexcept;
+
+        Window(const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept;
+
+        Window(const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept;
 
         Window(const int width, const int height, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept;
 
+        Window(const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept;
+
         Window(const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept;
-
-        Window(oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept;
-
-        Window(const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept;
 
         Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height) noexcept;
 
@@ -124,6 +130,18 @@ export namespace oglfw::wndw
         Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept;
 
         Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept;
+
+        Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height) noexcept;
+
+        Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, const std::string& title) noexcept;
+
+        Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, Window& sharing_window) noexcept;
+
+        Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, const std::string& title, Window& sharing_window) noexcept;
+
+        Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept;
+
+        Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept;
 
         Window(const WindowHints window_hints, const oglfw::context::Context& context, oglfw::monitor::Monitor& monitor) noexcept;
 
@@ -162,11 +180,16 @@ export namespace oglfw::wndw
         }
 
 
-        void clear_min_size_limits() noexcept;
+        const bool clear_max_size_limits() noexcept;
 
-        void clear_max_size_limits() noexcept;
 
-        void clear_size_limits() noexcept;
+        const bool clear_min_size_limits() noexcept;
+
+
+        const bool clear_pos() const noexcept;
+
+
+        const bool clear_size_limits() noexcept;
 
 
         static void close_callback(GLFWwindow* window_hndl) noexcept;
@@ -191,7 +214,7 @@ export namespace oglfw::wndw
         }
 
 
-        void get_frame_thickness(int& left, int& top, int& right, int& bottom) noexcept;
+        const bool get_frame_thickness(int& left, int& top, int& right, int& bottom) noexcept;
 
 
         inline GLFWwindow* get_handle() const noexcept
@@ -207,7 +230,10 @@ export namespace oglfw::wndw
         }
 
 
-        oglfw::utils::Size get_size() const noexcept;
+        const oglfw::utils::Pos get_pos() const noexcept;
+
+
+        const oglfw::utils::Size get_size() const noexcept;
 
 
         inline const int get_width() const noexcept
@@ -254,6 +280,34 @@ export namespace oglfw::wndw
         {
             return _window_ptr != nullptr;
         }
+
+
+        inline const bool move(const int dx, const int dy) const noexcept
+        {
+            return move(oglfw::utils::Offset(dx, dy));
+        }
+
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        const bool move(const oglfw::utils::OffsetT<T> offset) const noexcept
+        {
+            if (this->is_ok()) [[likely]]
+                return set_pos(this->get_pos() + offset);
+            else [[unlikely]]
+                return false;
+        }
+
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline const bool move(const oglfw::utils::Vec2T<T> offset) const noexcept
+        {
+            return move(offset.x, offset.y);
+        }
+
+
+        static void position_callback(GLFWwindow* window_hndl, int x_left, int y_top) noexcept;
 
 
         const bool reset_all_windows_default_hints() const noexcept;
@@ -325,19 +379,37 @@ export namespace oglfw::wndw
             set_max_size(max_size.width, max_size.height);
         }
 
+
         void set_max_size(int max_width, int max_height);
+
 
         inline void set_min_size(const oglfw::utils::Size& min_size)
         {
             set_min_size(min_size.width, min_size.height);
         }
 
+
+        const bool set_pos(const int new_x, const int new_y) const noexcept;
+
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline const bool set_pos(const oglfw::utils::PosT<T>& new_pos) const noexcept
+        {
+            return set_pos(int(new_pos.x), int(new_pos.y));
+        }
+
+
         void set_min_size(int min_width, int min_height);
+
 
         inline void set_size_limits(const oglfw::utils::Size& min_size, const oglfw::utils::Size& max_size)
         {
             set_size_limits(min_size.width, min_size.height, max_size.width, max_size.height);
         }
+
+
+
 
         void set_size_limits(int min_width, int min_height, int max_width, int max_height);
 
@@ -366,6 +438,9 @@ export namespace oglfw::wndw
         virtual inline void _close_window()
         {}
 
+        virtual inline void _new_position(const int x_left, const int y_top)
+        {}
+
         virtual inline void _resize(const int width, const int height)
         {}
 
@@ -388,6 +463,12 @@ export namespace oglfw::wndw
         void _set_all_callbacks(GLFWwindow* window_hndl) noexcept;
 
         void _set_hints(const WindowHints hints, const oglfw::context::Context& context) noexcept;
+
+        inline void _set_hint_position(const int x_left, const int y_top) const noexcept
+        {
+            glfwWindowHint(GLFW_POSITION_X, x_left);
+            glfwWindowHint(GLFW_POSITION_Y, y_top);
+        }
 
         inline void _set_user_ptr() noexcept
         {

@@ -47,6 +47,7 @@ namespace oglfw::wndw
         _windows_list.push_back(this);
     }
 
+
     Window::Window(const int width, const int height, const std::string& title) noexcept
     {
         _window_ptr = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
@@ -62,6 +63,7 @@ namespace oglfw::wndw
         _windows_list.push_back(this);
     }
 
+
     Window::Window(const int width, const int height, const std::string& title, Window& sharing_window) noexcept
     {
         _window_ptr = glfwCreateWindow(width, height, title.c_str(), nullptr, sharing_window.get_handle());
@@ -69,17 +71,109 @@ namespace oglfw::wndw
         _windows_list.push_back(this);
     }
 
+
+    Window::Window(const int x_left, const int y_top, const int width, const int height) noexcept
+    {
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, "", nullptr, nullptr);
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+
+    Window::Window(const int x_left, const int y_top, const int width, const int height, const std::string& title) noexcept
+    {
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+    Window::Window(const int x_left, const int y_top, const int width, const int height, Window& sharing_window) noexcept
+    {
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, "", nullptr, sharing_window.get_handle());
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+
+    Window::Window(const int x_left, const int y_top, const int width, const int height, const std::string& title, Window& sharing_window) noexcept
+    {
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, title.c_str(), nullptr, sharing_window.get_handle());
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+
+    Window::Window(oglfw::monitor::Monitor& monitor) noexcept
+    {
+        _window_ptr = _create_full_screen("", monitor);
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+
+    Window::Window(oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
+    {
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = _create_full_screen("", monitor, sharing_window);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+            }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+            }
+    }
+
+
+    Window::Window(const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
+    {
+        _window_ptr = _create_full_screen(title, monitor);
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+
+    Window::Window(const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
+    {
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = _create_full_screen(title, monitor, sharing_window);
+            _set_user_ptr();
+            _windows_list.push_back(this);
+            }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+            }
+    }
+
+
     Window::Window(const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept
     {
         if (monitor.is_ok()) [[likely]] {
             _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), nullptr);
             _set_user_ptr();
             _windows_list.push_back(this);
-        }
+            }
         else [[unlikely]] {
             _window_ptr = nullptr;
-        }
+            }
     }
+
+
+    Window::Window(const int width, const int height, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
+    {
+        if (monitor.is_ok()) [[likely]] {
+            _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), sharing_window.get_handle());
+            _set_user_ptr();
+            _windows_list.push_back(this);
+            }
+        else [[unlikely]] {
+            _window_ptr = nullptr;
+            }
+    }
+
 
     Window::Window(const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
     {
@@ -93,31 +187,6 @@ namespace oglfw::wndw
         }
     }
 
-    Window::Window(oglfw::monitor::Monitor& monitor) noexcept
-    {
-        _window_ptr = _create_full_screen("", monitor);
-        _set_user_ptr();
-        _windows_list.push_back(this);
-    }
-
-    Window::Window(const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
-    {
-        _window_ptr = _create_full_screen(title, monitor);
-        _set_user_ptr();
-        _windows_list.push_back(this);
-    }
-
-    Window::Window(const int width, const int height, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
-    {
-        if (monitor.is_ok()) [[likely]] {
-            _window_ptr = glfwCreateWindow(width, height, "", monitor.get_handle(), sharing_window.get_handle());
-            _set_user_ptr();
-            _windows_list.push_back(this);
-        }
-        else [[unlikely]] {
-            _window_ptr = nullptr;
-        }
-    }
 
     Window::Window(const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
@@ -131,29 +200,6 @@ namespace oglfw::wndw
         }
     }
 
-    Window::Window(oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
-    {
-        if (monitor.is_ok()) [[likely]] {
-            _window_ptr = _create_full_screen("", monitor, sharing_window);
-            _set_user_ptr();
-            _windows_list.push_back(this);
-        }
-        else [[unlikely]] {
-            _window_ptr = nullptr;
-        }
-    }
-
-    Window::Window(const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
-    {
-        if (monitor.is_ok()) [[likely]] {
-            _window_ptr = _create_full_screen(title, monitor, sharing_window);
-            _set_user_ptr();
-            _windows_list.push_back(this);
-        }
-        else [[unlikely]] {
-            _window_ptr = nullptr;
-        }
-    }
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height) noexcept
     {
@@ -163,6 +209,7 @@ namespace oglfw::wndw
         _windows_list.push_back(this);
     }
 
+
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, const std::string& title) noexcept
     {
         _set_hints(window_hints, context);
@@ -170,6 +217,7 @@ namespace oglfw::wndw
         _set_user_ptr();
         _windows_list.push_back(this);
     }
+
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, Window& sharing_window) noexcept
     {
@@ -179,6 +227,7 @@ namespace oglfw::wndw
         _windows_list.push_back(this);
     }
 
+
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, const std::string& title, Window& sharing_window) noexcept
     {
         _set_hints(window_hints, context);
@@ -186,6 +235,7 @@ namespace oglfw::wndw
         _set_user_ptr();
         _windows_list.push_back(this);
     }
+
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, oglfw::monitor::Monitor& monitor) noexcept
     {
@@ -200,6 +250,7 @@ namespace oglfw::wndw
         }
     }
 
+
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
     {
         if (monitor.is_ok()) [[likely]] {
@@ -212,6 +263,46 @@ namespace oglfw::wndw
             _window_ptr = nullptr;
         }
     }
+
+
+    Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height) noexcept
+    {
+        _set_hints(window_hints, context);
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, "", nullptr, nullptr);
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+    Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, const std::string& title) noexcept
+    {
+        _set_hints(window_hints, context);
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+
+    Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, Window& sharing_window) noexcept
+    {
+        _set_hints(window_hints, context);
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, "", nullptr, sharing_window.get_handle());
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
+
+    Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int x_left, const int y_top, const int width, const int height, const std::string& title, Window& sharing_window) noexcept
+    {
+        _set_hints(window_hints, context);
+        _set_hint_position(x_left, y_top);
+        _window_ptr = glfwCreateWindow(width, height, title.c_str(), nullptr, sharing_window.get_handle());
+        _set_user_ptr();
+        _windows_list.push_back(this);
+    }
+
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, oglfw::monitor::Monitor& monitor) noexcept
     {
@@ -226,6 +317,7 @@ namespace oglfw::wndw
         }
     }
 
+
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const std::string& title, oglfw::monitor::Monitor& monitor) noexcept
     {
         if (monitor.is_ok()) [[likely]] {
@@ -238,6 +330,7 @@ namespace oglfw::wndw
             _window_ptr = nullptr;
         }
     }
+
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
@@ -252,6 +345,7 @@ namespace oglfw::wndw
         }
     }
 
+
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const int width, const int height, const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
         if (monitor.is_ok()) [[likely]] {
@@ -265,6 +359,7 @@ namespace oglfw::wndw
         }
     }
 
+
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
         if (monitor.is_ok()) [[likely]] {
@@ -277,6 +372,7 @@ namespace oglfw::wndw
             _window_ptr = nullptr;
         }
     }
+
 
     Window::Window(const WindowHints window_hints, const oglfw::context::Context& context, const std::string& title, oglfw::monitor::Monitor& monitor, Window& sharing_window) noexcept
     {
@@ -301,35 +397,55 @@ namespace oglfw::wndw
     }
 
 
-    void Window::clear_min_size_limits() noexcept
+    const bool Window::clear_max_size_limits() noexcept
     {
-        if (this->is_ok()) {
-            this->_min_size.width = this->_MIN_WIDTH;
-            this->_min_size.height = this->_MIN_HEIGHT;
-            glfwSetWindowSizeLimits(this->get_handle(), GLFW_DONT_CARE, GLFW_DONT_CARE, this->_max_size.width, this->_max_size.height);
-        }
-    }
-
-
-    void Window::clear_max_size_limits() noexcept
-    {
-        if (this->is_ok()) {
+        if (this->is_ok()) [[likely]] {
             this->_max_size.width = this->_MAX_WIDTH;
             this->_max_size.height = this->_MAX_HEIGHT;
             glfwSetWindowSizeLimits(this->get_handle(), this->_min_size.width, this->_min_size.height, GLFW_DONT_CARE, GLFW_DONT_CARE);
+            return oglfw::err::ErrorStatus::is_ok();
         }
+        else [[unlikely]]
+            return false;
     }
 
 
-    void Window::clear_size_limits() noexcept
+    const bool Window::clear_min_size_limits() noexcept
     {
-        if (this->is_ok()) {
+        if (this->is_ok()) [[likely]] {
+            this->_min_size.width = this->_MIN_WIDTH;
+            this->_min_size.height = this->_MIN_HEIGHT;
+            glfwSetWindowSizeLimits(this->get_handle(), GLFW_DONT_CARE, GLFW_DONT_CARE, this->_max_size.width, this->_max_size.height);
+            return oglfw::err::ErrorStatus::is_ok();
+        }
+        else [[unlikely]]
+            return false;
+    }
+
+
+    const bool Window::clear_pos() const noexcept
+    {
+        if (this->is_ok()) [[likely]] {
+            glfwSetWindowPos(this->get_handle(), GLFW_ANY_POSITION, GLFW_ANY_POSITION);
+            return oglfw::err::ErrorStatus::is_ok();
+        }
+        else [[unlikely]]
+            return false;
+    }
+
+
+    const bool Window::clear_size_limits() noexcept
+    {
+        if (this->is_ok()) [[likely]] {
             this->_min_size.width = this->_MIN_WIDTH;
             this->_min_size.height = this->_MIN_HEIGHT;
             this->_max_size.width = this->_MAX_WIDTH;
             this->_max_size.height = this->_MAX_HEIGHT;
             glfwSetWindowSizeLimits(this->get_handle(), GLFW_DONT_CARE, GLFW_DONT_CARE, GLFW_DONT_CARE, GLFW_DONT_CARE);
+            return oglfw::err::ErrorStatus::is_ok();
         }
+        else [[unlikely]]
+            return false;
     }
 
 
@@ -343,26 +459,49 @@ namespace oglfw::wndw
     }
 
 
-    void Window::get_frame_thickness(int& left, int& top, int& right, int& bottom) noexcept
+    const bool Window::get_frame_thickness(int& left, int& top, int& right, int& bottom) noexcept
     {
         if (this->is_ok()) [[likely]] {
             glfwGetWindowFrameSize(this->get_handle(), &left, &top, &right, &bottom);
+            return true;
         }
         else [[unlikely]] {
             left = right = top = bottom = 0;
+            return false;
         }
     }
 
 
-    oglfw::utils::Size Window::get_size() const noexcept
+    const oglfw::utils::Pos Window::get_pos() const noexcept
     {
-        if (this->is_ok()) [[likely]] {
-            int width, height;
-            glfwGetWindowSize(this->get_handle(), &width, &height);
-            return oglfw::utils::Size(int(width), int(height));
+        oglfw::utils::Pos current_pos(GLFW_ANY_POSITION, GLFW_ANY_POSITION);
+
+        if (this->is_ok()) {
+            glfwGetWindowPos(this->get_handle(), &current_pos.x, &current_pos.y);
         }
-        else [[unlikely]] {
-            return oglfw::utils::Size(0, 0);
+
+        return std::move(current_pos);
+    }
+
+
+    const oglfw::utils::Size Window::get_size() const noexcept
+    {
+        oglfw::utils::Size current_size;  // notice: set here to (0, 0)
+
+        if (this->is_ok()) {
+            glfwGetWindowSize(this->get_handle(), &current_size.width, &current_size.height);
+        }
+
+        return std::move(current_size);
+    }
+
+
+    void Window::position_callback(GLFWwindow* window_hndl, int x_left, int y_top) noexcept
+    {
+        auto window_ptr{ Window::_windows_list.find(window_hndl) };
+
+        if (window_ptr != nullptr) {
+            window_ptr->_new_position(x_left, y_top);
         }
     }
 
@@ -383,6 +522,7 @@ namespace oglfw::wndw
         if (this->is_ok()) [[likely]] {
             // TODO: implement this
             // ...
+
             return oglfw::err::ErrorStatus::is_ok();
         }
         else [[unlikely]]
@@ -404,6 +544,7 @@ namespace oglfw::wndw
     {
         if (window_hndl != nullptr) {
             glfwSetWindowCloseCallback(window_hndl, Window::close_callback);
+            glfwSetWindowPosCallback(window_hndl, Window::position_callback);
             glfwSetWindowSizeCallback(window_hndl, Window::resize_callback);
         }
     }
@@ -467,6 +608,19 @@ namespace oglfw::wndw
             glfwSetWindowSizeLimits(this->get_handle(), min_width, min_height, GLFW_DONT_CARE, GLFW_DONT_CARE);
         }
     }
+
+
+    const bool Window::set_pos(const int new_x, const int new_y) const noexcept
+    {
+        if (this->is_ok()) [[likely]] {
+            glfwSetWindowPos(this->get_handle(), new_x, new_y);
+            return oglfw::err::ErrorStatus::is_ok();
+        }
+        else [[unlikely]] {
+            return false;
+        }
+    }
+
 
 
     void Window::set_size_limits(int min_width, int min_height, int max_width, int max_height)

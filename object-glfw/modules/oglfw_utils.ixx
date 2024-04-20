@@ -89,7 +89,7 @@ export namespace oglfw::utils
         inline OffsetT() noexcept = default;
 
         template<typename T1, typename T2>
-            requires std::is_arithmetic<T1>&& std::is_arithmetic<T2>
+            requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
         inline OffsetT(const T1 dx_, const T2 dy_) noexcept
             : dx(ComponentT(dx_)), dy(ComponentT(dy_))
         {}
@@ -127,8 +127,6 @@ export namespace oglfw::utils
             dy = ComponentT(vec.y);
             return *this;
         }
-
-        inline OffsetT& operator= (OffsetT&&) noexcept = default;
 
     };
 
@@ -596,7 +594,7 @@ export namespace oglfw::utils
         inline Vec2T() noexcept = default;
 
         template<typename T1, typename T2>
-            requires std::is_arithmetic<T1> && std::is_arithmetic<T2>
+            requires std::is_arithmetic_v<T1> && std::is_arithmetic_v<T2>
         inline Vec2T(const T1 x_, const T2 y_) noexcept
             : x(ComponentT(x_)), y(ComponentT(y_))
         {}
@@ -621,7 +619,7 @@ export namespace oglfw::utils
             : x(ComponentT(offset.dx)), y(ComponentT(offset.dy))
         {}
 
-        inline Vec2T(Vec2T&&) noexcept = default;
+        //inline Vec2T(const Vec2T&) noexcept = default;
 
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -649,8 +647,6 @@ export namespace oglfw::utils
             y = ComponentT(other.dy);
             return *this;
         }
-
-        inline Vec2T& operator= (Vec2T&&) noexcept = default;
 
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -737,7 +733,25 @@ export namespace oglfw::utils
 
         template<typename T>
             requires std::is_arithmetic_v<T>
+        inline const Vec2T operator+ (const Vec2T<T>& other) const noexcept
+        {
+            Vec2T res{ *this };
+            res += other;
+            return res;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
         inline Vec2T operator+ (const SizeT<T>& size) noexcept
+        {
+            Vec2T res{ *this };
+            res += size;
+            return res;
+        }
+
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline const Vec2T operator+ (const SizeT<T>& size) const noexcept
         {
             Vec2T res{ *this };
             res += size;
@@ -753,23 +767,32 @@ export namespace oglfw::utils
             return res;
         }
 
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline const Vec2T operator+ (const OffsetT<T>& offset) const noexcept
+        {
+            Vec2T res{ *this };
+            res += offset;
+            return res;
+        }
+
         template<typename T1, typename T2>
             requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
-        friend inline Vec2T<T2> operator+ (const SizeT<T1> size, const Vec2T<T2> vec)
+        friend inline const Vec2T<T2> operator+ (const SizeT<T1> size, const Vec2T<T2> vec)
         {
             return vec + size;
         }
 
         template<typename T1, typename T2>
             requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
-        friend inline Vec2T<T2> operator+ (const OffsetT<T1> offset, const Vec2T<T2> vec)
+        friend inline const Vec2T<T2> operator+ (const OffsetT<T1> offset, const Vec2T<T2> vec)
         {
             return vec + offset;
         }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Vec2T operator- (const Vec2T<T>& other) noexcept
+        inline const Vec2T operator- (const Vec2T<T>& other) const noexcept
         {
             Vec2T res{ *this };
             res -= other;
@@ -778,7 +801,7 @@ export namespace oglfw::utils
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Vec2T operator- (const SizeT<T>& size) noexcept
+        inline const Vec2T operator- (const SizeT<T>& size) const noexcept
         {
             Vec2T res{ *this };
             res -= size;
@@ -787,7 +810,7 @@ export namespace oglfw::utils
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Vec2T operator- (const OffsetT<T>& offset) noexcept
+        inline const Vec2T operator- (const OffsetT<T>& offset) const noexcept
         {
             Vec2T res{ *this };
             res -= offset;
@@ -796,7 +819,7 @@ export namespace oglfw::utils
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Vec2T operator* (const T scaling) noexcept
+        inline const Vec2T operator* (const T scaling) const noexcept
         {
             asssert(scaling > T(0));
             Vec2T res{ *this };
@@ -805,15 +828,15 @@ export namespace oglfw::utils
         }
 
         template<typename T1, typename T2>
-            requires std::is_arithmetic_v<T1> && std::is_arithmetic_v<T2>
-        friend inline Vec2T<T2> operator* (const T1 scaling, const Vec2T<T2> vec)
+            requires std::is_arithmetic_v<T1>&& std::is_arithmetic_v<T2>
+        friend inline const Vec2T<T2> operator* (const T1 scaling, const Vec2T<T2> vec)
         {
             return vec * scaling;
         }
 
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Vec2T operator/ (const T scaling)
+        inline const Vec2T operator/ (const T scaling) const
         {
             assert(scaling > ComponentT(0));
             Vec2T res{ *this };

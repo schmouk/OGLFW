@@ -80,7 +80,7 @@ export namespace oglfw::err
     export class ErrorStatus
     {
     public:
-        static inline const int get_curent_error() noexcept
+        static inline const int get_current_error() noexcept
         {
             _last_error_code = glfwGetError(const_cast<const char**>(&_last_error_descr));
             return _last_error_code;
@@ -101,7 +101,7 @@ export namespace oglfw::err
         [[nodiscard]]
         static inline const bool is_ok() noexcept
         {
-            return is_ok(get_curent_error());
+            return is_ok(get_current_error());
         }
 
         [[nodiscard]]
